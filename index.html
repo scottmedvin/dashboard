@@ -249,11 +249,5 @@
         // Load Google API
         gapiLoaded();
     </script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>
-        window.onload = function() {
-            gisLoaded();
-        };
-    </script>
-</body>
+<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>    </body>
 </html>
