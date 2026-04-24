@@ -172,41 +172,49 @@
             document.getElementById('calendarEvents').innerHTML = 'Sign in to view your calendar events.';
         }
 
-        async function listUpcomingEvents() {
-            let response;
-            try {
-                const request = {
-                    'calendarId': 'primary',
-                    'timeMin': (new Date()).toISOString(),
-                    'showDeleted': false,
-                    'singleEvents': true,
-                    'maxResults': 10,
-                    'orderBy': 'startTime',
-                };
-                response = await gapi.client.calendar.events.list(request);
-            } catch (err) {
-                document.getElementById('calendarEvents').innerHTML = 'Error loading calendar: ' + err.message;
-                return;
-            }
+      async function listUpcomingEvents() {
+  let response;
+  try {
+    const request = {
+      calendarId: 'primary',
+      timeMin: (new Date()).toISOString(),
+      showDeleted: false,
+      singleEvents: true,
+      maxResults: 10,
+      orderBy: 'startTime',
+    };
+    response = await gapi.client.calendar.events.list(request);
+  } catch (err) {
+    console.error('Calendar API error:', err);
+    const msg =
+      (err.result && err.result.error && err.result.error.message)
+        ? err.result.error.message
+        : (err.message || 'Unknown error');
+    document.getElementById('calendarEvents').innerHTML =
+      'Error loading calendar: ' + msg;
+    return;
+  }
 
-            const events = response.result.items;
-            if (!events || events.length == 0) {
-                document.getElementById('calendarEvents').innerHTML = 'No upcoming events found.';
-                return;
-            }
+  const events = response.result.items;
+  if (!events || events.length === 0) {
+    document.getElementById('calendarEvents').innerHTML =
+      'No upcoming events found.';
+    return;
+  }
 
-            const output = events.map(event => {
-                const when = event.start.dateTime || event.start.date;
-                const date = new Date(when);
-                const timeStr = event.start.dateTime ? date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'}) : 'All day';
-                return `<div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
-                    <div style="font-weight: 600; color: var(--text);">${event.summary}</div>
-                    <div style="font-size: 12px; color: var(--sub); margin-top: 2px;">${timeStr}</div>
-                </div>`;
-            }).join('');
-
-            document.getElementById('calendarEvents').innerHTML = output;
-        }
+  const output = events.map(event => {
+    const when = event.start.dateTime || event.start.date;
+    const date = new Date(when);
+    const timeStr = event.start.dateTime
+      ? date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : 'All day';
+    return `<div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+      <div style="font-weight: 600; color: var(--text);">${event.summary}</div>
+      <div style="font-size: 12px; color: var(--sub); margin-top: 2px;">${timeStr}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('calendarEvents').innerHTML = output;
+}
 
         // Clock
         function updateClock() {
@@ -246,14 +254,9 @@
             localStorage.setItem('notesText', notesArea.value);
         });
 
-        // Load Google API
-        gapiLoaded();
-    </script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>
-        window.onload = function() {
-            gisLoaded();
-        };
     </script>
 </body>
+    <!-- Google APIs -->
+<script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
 </html>
