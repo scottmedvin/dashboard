@@ -68,7 +68,7 @@ To connect your Google Calendar, you need to create API credentials:
 3. Click "Restrict Key" (recommended)
 4. Under "API restrictions", select "Restrict key"
 5. Select "Google Calendar API"
-6. Under "Website restrictions", add: `scottmedvin.github.io/*`
+6. Under "Website restrictions", add: `https://scottmedvin.github.io/*`
 7. Click "Save"
 
 ### Step 5: Update the Dashboard Code
@@ -152,6 +152,22 @@ You can customize colors by editing the CSS variables in `index.html`:
 - Custom themes
 - More calendar views (week, month)
 - Task sync with Google Tasks
+
+## 🧰 Troubleshooting
+
+If sign-in fails:
+
+1. Open browser DevTools (F12) → Console tab → look for red errors
+2. Test the API key directly:
+   `https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest?key=YOUR_KEY`
+   - Long JSON response = key works
+   - `400 API_KEY_INVALID` = key is stale or wrong; create a new one
+   - `403 API_KEY_HTTP_REFERRER_BLOCKED` from a direct browser tab = restrictions working correctly (this is expected)
+3. Verify Cloud Console settings:
+   - Project number matches Client ID prefix in `index.html`
+   - Google Calendar API is enabled
+   - API key restrictions: Application = `https://scottmedvin.github.io/*`, API = Google Calendar API
+   - OAuth consent screen: your email is a test user (or app is in production)
 
 ## 📄 License
 
